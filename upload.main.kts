@@ -2,21 +2,25 @@
 
 @file:DependsOn("org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.5.1")
 
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import java.io.File
 import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.charset.StandardCharsets
-import java.util.Base64
-import kotlinx.serialization.json.*
+import java.util.*
 
 
 val version = "test"//tag()
 val headers = githubHeaders()
 println("test $headers")
 
-File("./tmp/").walk().forEach { fileToUpload ->
-    uploadFile(fileToUpload)
-}
+File("./tmp/").walk()
+    .filter { it.isFile }
+    .forEach { fileToUpload ->
+        uploadFile(fileToUpload)
+    }
 
 println("Upload complete")
 
@@ -28,7 +32,7 @@ fun uploadFile(fileToUpload: File) {
     releaseRequest.setRequestProperty("Authorization", "Bearer ${headers["Authorization"]}")
     val releaseResponse = releaseRequest.inputStream.bufferedReader().use { it.readText() }
     val json = Json.parseToJsonElement(releaseResponse).jsonObject
-    var uploadUrl =  json["upload_url"]!!.jsonPrimitive.content
+    var uploadUrl = json["upload_url"]!!.jsonPrimitive.content
     uploadUrl = uploadUrl.substring(0, uploadUrl.indexOf("{"))
 
     println("Uploading $fileName to $uploadUrl")
