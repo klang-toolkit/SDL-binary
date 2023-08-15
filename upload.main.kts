@@ -44,7 +44,7 @@ fun uploadFile(fileToUpload: File) {
 }
 
 
-fun tag() = System.getenv("GITHUB_REF")
+fun tag() = System.getenv("GITHUB_REF_NAME")
 
 fun githubHeaders(): Map<String, String> {
     val githubBasic = System.getenv("GITHUB_BASIC")
