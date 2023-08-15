@@ -25,7 +25,7 @@ println("Upload complete")
 
 fun uploadFile(fileToUpload: File) {
     val fileName = fileToUpload.name
-    val releaseUrl = "https://api.github.com/repos/ygdrasil-io/SDL-binary/releases/tags/$version"
+    val releaseUrl = "https://api.github.com/repos/klang-toolkit/SDL-binary/releases/tags/$version"
     val releaseRequest = URL(releaseUrl).openConnection() as HttpURLConnection
     releaseRequest.requestMethod = "GET"
     releaseRequest.setRequestProperty("Authorization", "Bearer $token")
