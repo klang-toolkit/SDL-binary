@@ -17,6 +17,6 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ./tmp/*
+          file: ./tmp/libSDL2.dll
           tag: ${{ github.ref }}
           overwrite: true
