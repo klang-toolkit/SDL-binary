@@ -12,6 +12,7 @@ import kotlinx.serialization.json.*
 
 val version = "test"//tag()
 val headers = githubHeaders()
+println("test $headers")
 
 File("./tmp/").walk().forEach { fileToUpload ->
     uploadFile(fileToUpload)
