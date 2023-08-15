@@ -3,20 +3,37 @@
 import java.io.*
 import java.net.URL
 
+/** Constants **/
+val darwinUrl = "https://github.com/libsdl-org/SDL/releases/download/release-2.28.2/SDL2-2.28.2.dmg"
+val windowsUrl = "https://github.com/libsdl-org/SDL/releases/download/release-2.28.2/SDL2-2.28.2-win32-x64.zip"
+val tmpName = "./tmp/tmp.bin"
 
-val fileUrl = "https://github.com/libsdl-org/SDL/releases/download/release-2.28.2/SDL2-2.28.2.dmg"
-val fileName = "./tmp/temp.bin"
-downloadFile(fileUrl, fileName)
-"hdiutil attach $fileName".run {
+/** Actual script **/
+// Download darwin(mac) SDK and extract headers
+downloadFile(darwinUrl, tmpName)
+"hdiutil attach $tmpName".run { println(it) }
+"cp -R /Volumes/SDL2/SDL2.framework ./tmp/SDL2".run { println(it) }
+"zip -r ./tmp/headers.zip ./tmp/SDL2/Versions/A/Headers".run { println(it) }
+"cp ./tmp/SDL2/Versions/A/SDL2 ./tmp/libSDL2.dylib".run { println(it) }
 
-}
-"cp -R /Volumes/SDL2/SDL2.framework ./tmp/SDL2".run {
+// cleanup
+File(tmpName).delete()
+File("./tmp/SDL2").deleteRecursively()
 
-}
+// Download windows SDK and extract headers
+downloadFile(windowsUrl, tmpName)
+"unzip $tmpName -d ./tmp/SDL2".run { println(it) }
+"cp ./tmp/SDL2/SDL2.dll ./tmp/libSDL2.dll".run { println(it) }
 
+// cleanup
+File(tmpName).delete()
+File("./tmp/SDL2").deleteRecursively()
 
+/** Utilities **/
 fun downloadFile(fileUrl: String, fileName: String) {
-    File(fileName).parentFile.mkdirs()
+    File(fileName).apply {
+        if (parentFile.exists().not()) parentFile.mkdirs()
+    }
     BufferedInputStream(URL(fileUrl).openStream()).use { bufferedInputStream ->
         FileOutputStream(fileName).use { fileOutputStream ->
             val dataBuffer = ByteArray(1024)
