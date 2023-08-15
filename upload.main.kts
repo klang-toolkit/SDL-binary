@@ -8,12 +8,10 @@ import kotlinx.serialization.json.jsonPrimitive
 import java.io.File
 import java.net.HttpURLConnection
 import java.net.URL
-import java.nio.charset.StandardCharsets
-import java.util.*
-
 
 val version = System.getenv("GITHUB_REF_NAME")
 val token = System.getenv("GITHUB_TOKEN")
+val uploadUrl = findUploadUrl()
 
 File("./tmp/").walk()
     .filter { it.isFile }
@@ -25,15 +23,6 @@ println("Upload complete")
 
 fun uploadFile(fileToUpload: File) {
     val fileName = fileToUpload.name
-    val releaseUrl = "https://api.github.com/repos/klang-toolkit/SDL-binary/releases/tags/$version"
-    val releaseRequest = URL(releaseUrl).openConnection() as HttpURLConnection
-    releaseRequest.requestMethod = "GET"
-    releaseRequest.setRequestProperty("Authorization", "Bearer $token")
-    val releaseResponse = releaseRequest.inputStream.bufferedReader().use { it.readText() }
-    val json = Json.parseToJsonElement(releaseResponse).jsonObject
-    var uploadUrl = json["upload_url"]!!.jsonPrimitive.content
-    uploadUrl = uploadUrl.substring(0, uploadUrl.indexOf("{"))
-
     println("Uploading $fileName to $uploadUrl")
     val uploadRequest = URL("$uploadUrl?name=$fileName").openConnection() as HttpURLConnection
     uploadRequest.requestMethod = "POST"
@@ -48,23 +37,18 @@ fun uploadFile(fileToUpload: File) {
     }
     uploadRequest.inputStream.bufferedReader().use { it.readText() }
         .let { println(it) }
+    uploadRequest.disconnect()
 }
 
+fun findUploadUrl(): String {
 
-fun tag() = System.getenv("GITHUB_REF_NAME")
-
-fun githubHeaders(): Map<String, String> {
-    val githubBasic = System.getenv("GITHUB_BASIC")
-    val githubToken = System.getenv("GITHUB_TOKEN")
-
-    val auth = if (githubBasic != null) {
-        "Basic ${Base64.getEncoder().encodeToString(githubBasic.toByteArray(StandardCharsets.UTF_8))}"
-    } else {
-        githubToken
-    }
-
-    return mapOf(
-        "Accept" to "application/vnd.github.v3+json",
-        "Authorization" to auth
-    )
+    val releaseUrl = "https://api.github.com/repos/klang-toolkit/SDL-binary/releases/tags/$version"
+    val releaseRequest = URL(releaseUrl).openConnection() as HttpURLConnection
+    releaseRequest.requestMethod = "GET"
+    releaseRequest.setRequestProperty("Authorization", "Bearer $token")
+    val releaseResponse = releaseRequest.inputStream.bufferedReader().use { it.readText() }
+    val json = Json.parseToJsonElement(releaseResponse).jsonObject
+    val uploadUrl = json["upload_url"]!!.jsonPrimitive.content
+    releaseRequest.disconnect()
+    return uploadUrl.substring(0, uploadUrl.indexOf("{"))
 }
