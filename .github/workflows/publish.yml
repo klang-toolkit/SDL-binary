@@ -23,8 +23,12 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: libSDL2.dylib
-          path: ./tmp/SDL2/Versions/A/SDL2
+          path: ./tmp/libSDL2.dylib
       - uses: actions/upload-artifact@v3
         with:
           name: headers.zip
           path: ./tmp/headers.zip
+      - uses: actions/upload-artifact@v3
+        with:
+          name: libSDL2.dll
+          path: ./tmp/libSDL2.dll
