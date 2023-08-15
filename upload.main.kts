@@ -47,6 +47,8 @@ fun uploadFile(fileToUpload: File) {
             input.copyTo(output)
         }
     }
+    uploadRequest.inputStream.bufferedReader().use { it.readText() }
+        .let { println(it) }
 }
 
 
