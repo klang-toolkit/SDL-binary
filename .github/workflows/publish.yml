@@ -19,4 +19,4 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: fwilhe2/setup-kotlin@main
-      - run: ./sdk.main.kts
+      - run: ./sdl.main.kts
