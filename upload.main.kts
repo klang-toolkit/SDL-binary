@@ -54,7 +54,7 @@ fun githubHeaders(): Map<String, String> {
     val auth = if (githubBasic != null) {
         "Basic ${Base64.getEncoder().encodeToString(githubBasic.toByteArray(StandardCharsets.UTF_8))}"
     } else {
-        "token $githubToken"
+        githubToken
     }
 
     return mapOf(
