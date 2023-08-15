@@ -20,7 +20,11 @@ jobs:
       - uses: actions/checkout@v3
       - uses: fwilhe2/setup-kotlin@main
       - run: ./sdl.main.kts
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: libSDL2.dylib
-          path: /tmp/SDL2/Versions/A/SDL2
+          path: ./tmp/SDL2/Versions/A/SDL2
+      - uses: actions/upload-artifact@v3
+        with:
+          name: headers.zip
+          path: ./tmp/headers.zip
