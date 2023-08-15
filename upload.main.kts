@@ -12,9 +12,8 @@ import java.nio.charset.StandardCharsets
 import java.util.*
 
 
-val version = "test"//tag()
-val headers = githubHeaders()
-println("test $headers")
+val version = System.getenv("GITHUB_REF_NAME")
+val token = System.getenv("GITHUB_TOKEN")
 
 File("./tmp/").walk()
     .filter { it.isFile }
@@ -29,7 +28,7 @@ fun uploadFile(fileToUpload: File) {
     val releaseUrl = "https://api.github.com/repos/ygdrasil-io/SDL-binary/releases/tags/$version"
     val releaseRequest = URL(releaseUrl).openConnection() as HttpURLConnection
     releaseRequest.requestMethod = "GET"
-    releaseRequest.setRequestProperty("Authorization", "Bearer ${headers["Authorization"]}")
+    releaseRequest.setRequestProperty("Authorization", "Bearer $token")
     val releaseResponse = releaseRequest.inputStream.bufferedReader().use { it.readText() }
     val json = Json.parseToJsonElement(releaseResponse).jsonObject
     var uploadUrl = json["upload_url"]!!.jsonPrimitive.content
@@ -38,7 +37,7 @@ fun uploadFile(fileToUpload: File) {
     println("Uploading $fileName to $uploadUrl")
     val uploadRequest = URL("$uploadUrl?name=$fileName").openConnection() as HttpURLConnection
     uploadRequest.requestMethod = "POST"
-    uploadRequest.setRequestProperty("Authorization", "Bearer ${headers["Authorization"]}")
+    uploadRequest.setRequestProperty("Authorization", "Bearer $token")
     uploadRequest.setRequestProperty("Content-Type", "application/octet-stream")
     uploadRequest.setRequestProperty("Content-Length", fileToUpload.length().toString())
     uploadRequest.doOutput = true
