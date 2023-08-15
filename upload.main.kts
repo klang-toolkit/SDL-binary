@@ -10,7 +10,7 @@ import java.util.Base64
 import kotlinx.serialization.json.*
 
 
-val version = version()
+val version = tag()
 val headers = githubHeaders()
 
 File("./tmp/").walk().forEach { fileToUpload ->
@@ -44,7 +44,7 @@ fun uploadFile(fileToUpload: File) {
 }
 
 
-fun version() = System.getenv("GITHUB_REF")
+fun tag() = System.getenv("GITHUB_REF")
 
 fun githubHeaders(): Map<String, String> {
     val githubBasic = System.getenv("GITHUB_BASIC")
