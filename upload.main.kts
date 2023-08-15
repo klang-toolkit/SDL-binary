@@ -28,7 +28,8 @@ fun uploadFile(fileToUpload: File) {
     releaseRequest.setRequestProperty("Authorization", "Bearer ${headers["Authorization"]}")
     val releaseResponse = releaseRequest.inputStream.bufferedReader().use { it.readText() }
     val json = Json.parseToJsonElement(releaseResponse).jsonObject
-    val uploadUrl = URL(URL(json["upload_url"]!!.toString()).protocol + "://" + URL(releaseResponse).host).toString() + "/assets"
+    var uploadUrl =  json["upload_url"]!!.toString()
+    uploadUrl = uploadUrl.substring(0, uploadUrl.indexOf("{"))
 
     println("Uploading $fileName to $uploadUrl")
     val uploadRequest = URL("$uploadUrl?name=$fileName").openConnection() as HttpURLConnection
