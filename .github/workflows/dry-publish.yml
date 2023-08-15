@@ -1,4 +1,4 @@
-name: Publish binary
+name: Dry publish binary
 
 on:
   push:
@@ -22,13 +22,4 @@ jobs:
       - run: ./sdl.main.kts
       - uses: actions/upload-artifact@v3
         with:
-          name: libSDL2.dylib
-          path: ./tmp/libSDL2.dylib
-      - uses: actions/upload-artifact@v3
-        with:
-          name: headers.zip
-          path: ./tmp/headers.zip
-      - uses: actions/upload-artifact@v3
-        with:
-          name: libSDL2.dll
-          path: ./tmp/libSDL2.dll
+          path: ./tmp/*
