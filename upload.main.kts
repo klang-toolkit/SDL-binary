@@ -10,7 +10,7 @@ import java.util.Base64
 import kotlinx.serialization.json.*
 
 
-val version = tag()
+val version = "test"//tag()
 val headers = githubHeaders()
 
 File("./tmp/").walk().forEach { fileToUpload ->
