@@ -1,19 +1,14 @@
 name: Publish binary
 
 on:
-  release:
-    types: [created]
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  push:
+    tags:
+      - '*'
 
 jobs:
-  tests:
-    strategy:
-      matrix:
-        os: [macos-latest]
-    runs-on: ${{ matrix.os }}
+  build:
+    runs-on: macos-latest
+
     steps:
       - uses: actions/checkout@v3
       - uses: fwilhe2/setup-kotlin@main
