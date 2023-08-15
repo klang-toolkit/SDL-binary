@@ -10,7 +10,11 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 val version = System.getenv("GITHUB_REF_NAME")
+    ?.takeIf { it.isNotBlank() }
+    ?: requestFromInput("Please input tag")
 val token = System.getenv("GITHUB_TOKEN")
+    ?.takeIf { it.isNotBlank() }
+    ?: requestFromInput("Please input token")
 val uploadUrl = findUploadUrl()
 
 File("./tmp/").walk()
@@ -29,7 +33,8 @@ println("Upload complete")
 fun uploadFile(fileToUpload: File) {
     val fileName = fileToUpload.name
     println("Uploading $fileName to $uploadUrl")
-    val uploadRequest = URL("$uploadUrl?name=$fileName").openConnection() as HttpURLConnection
+    val uploadRequest = URL("$uploadUrl?name=$fileName")
+        .openConnection() as HttpURLConnection
     uploadRequest.requestMethod = "POST"
     uploadRequest.setRequestProperty("Authorization", "Bearer $token")
     uploadRequest.setRequestProperty("Content-Type", "application/octet-stream")
@@ -56,4 +61,9 @@ fun findUploadUrl(): String {
     val uploadUrl = json["upload_url"]!!.jsonPrimitive.content
     releaseRequest.disconnect()
     return uploadUrl.substring(0, uploadUrl.indexOf("{"))
+}
+
+fun requestFromInput(message: String): String {
+    println(message)
+    return readlnOrNull()?.takeIf { it.isNotBlank() } ?: requestFromInput(message)
 }
