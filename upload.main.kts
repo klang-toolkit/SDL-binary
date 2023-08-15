@@ -16,7 +16,12 @@ val uploadUrl = findUploadUrl()
 File("./tmp/").walk()
     .filter { it.isFile }
     .forEach { fileToUpload ->
-        uploadFile(fileToUpload)
+        try {
+            uploadFile(fileToUpload)
+        } catch (e: Exception) {
+            println("Failed to upload ${fileToUpload.name}")
+            e.printStackTrace()
+        }
     }
 
 println("Upload complete")
